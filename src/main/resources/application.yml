@@ -1,3 +1,9 @@
+date:
+  media:
+    max-width: 640
+    max-height: 320
+  data:
+    url: http://localhost:8980/media
 spring:
   jpa:
     hibernate:

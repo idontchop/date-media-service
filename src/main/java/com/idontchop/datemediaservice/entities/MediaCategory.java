@@ -2,14 +2,17 @@ package com.idontchop.datemediaservice.entities;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
-import org.springframework.data.annotation.Id;
 
-public class MediaType {
+
+@Entity (name = "category")
+public class MediaCategory {
 	
-	public MediaType () {}
+	public MediaCategory () {}
 	
 	@Id
 	@GeneratedValue ( strategy = GenerationType.IDENTITY)

@@ -2,6 +2,7 @@ package com.idontchop.datemediaservice.entities;
 
 import java.util.Date;
 
+import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -9,7 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-
+@Entity
 public class Media {
 	
 	public Media() {}
@@ -18,11 +19,11 @@ public class Media {
 	@GeneratedValue ( strategy = GenerationType.IDENTITY)
 	private long id;
 	
-	private String username;
+	private String owner;
 
 	@ManyToOne ( fetch = FetchType.EAGER)
-	@JoinColumn (name = "media_type_id")
-	private MediaType mediaType;
+	@JoinColumn (name = "category_id")
+	private MediaCategory category;
 	
 	public enum Display {
 		PROFILE,		// All
@@ -38,7 +39,7 @@ public class Media {
 	
 	private Date created = new Date();
 	
-	private String href;			// id on data server
+	private String dataId;			// id on data server
 
 	public long getId() {
 		return id;
@@ -49,19 +50,19 @@ public class Media {
 	}
 
 	public String getUsername() {
-		return username;
+		return owner;
 	}
 
 	public void setUsername(String username) {
-		this.username = username;
+		this.owner = username;
 	}
 
-	public MediaType getMediaType() {
-		return mediaType;
+	public MediaCategory getMediaType() {
+		return category;
 	}
 
-	public void setMediaType(MediaType mediaType) {
-		this.mediaType = mediaType;
+	public void setMediaType(MediaCategory mediaType) {
+		this.category = mediaType;
 	}
 
 	public Display getDisplay() {
@@ -97,11 +98,11 @@ public class Media {
 	}
 
 	public String getHref() {
-		return href;
+		return dataId;
 	}
 
 	public void setHref(String href) {
-		this.href = href;
+		this.dataId = href;
 	}
 	
 	
