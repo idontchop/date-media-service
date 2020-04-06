@@ -34,10 +34,11 @@ public class ImageService {
 	 * 
 	 * @param image
 	 * @param crop
+	 * @param doResize will send bufferedImage to resize method before returning
 	 * @return
 	 * @throws IOException If not image
 	 */
-	public byte[] cropImage ( byte[] image, Crop crop ) throws IOException {
+	public byte[] cropImage ( byte[] image, Crop crop, boolean doResize ) throws IOException {
 		
 		// coverts byte array to buffered image 
 		InputStream in;
@@ -45,7 +46,7 @@ public class ImageService {
 		BufferedImage bufferedImage = ImageIO.read(in);
 		
 		// process buffered image
-		bufferedImage = cropImage ( bufferedImage, crop );
+		bufferedImage = cropImage ( bufferedImage, crop, doResize );
 		
 		// convert back to byte array
 		ByteArrayOutputStream baos = new ByteArrayOutputStream();
@@ -65,10 +66,11 @@ public class ImageService {
 	 * 
 	 * @param bufferedImage
 	 * @param crop
+	 * @param doResize will send bufferedImage to resize method before returning
 	 * @return
 	 * @throws IOException
 	 */
-	public BufferedImage cropImage ( BufferedImage bufferedImage, Crop crop ) throws IOException {
+	public BufferedImage cropImage ( BufferedImage bufferedImage, Crop crop, boolean doResize ) throws IOException {
 		
 		// saved width and height to easytype variable
 		// crop values should be passed by %
@@ -76,29 +78,39 @@ public class ImageService {
 		int h = bufferedImage.getHeight();
 		
 		// if crop passed by pixel, we can use units directly
-		if (crop.getUnit().equals("px") ) {
+		if ( crop == null ); // skip cropping 
+		else if (crop.getUnit().equals("px") ) {
 			bufferedImage = bufferedImage.getSubimage( (int) crop.getX(), (int) crop.getY(), (int) crop.getWidth(), (int) crop.getHeight());
 		} else { // crop.getUnit().equals("%") if more are added (unlikely)
 			// by percentage, will need to convert
 			// this is caused by container resizing
-			// plan: write crop method that produces proper numbers from image width
-			bufferedImage = bufferedImage.getSubimage( lfp(crop.getX(),w), lfp(crop.getY(), h), lfp(crop.getWidth(), w), lfp(crop.getHeight(), h));
+			// TODO: write crop method that produces proper numbers from image width (ex: 50% gives a centralized 50% of the image)
+			bufferedImage = bufferedImage.getSubimage( (int) crop.getX(), (int) crop.getY(), lfp(crop.getWidth(), w), lfp(crop.getHeight(), h));
 		}
 		
 		// Required to convert some pngs
 		BufferedImage result = new BufferedImage ( bufferedImage.getWidth(), bufferedImage.getHeight(), BufferedImage.TYPE_INT_RGB);
 		result.createGraphics().drawImage(bufferedImage, 0, 0, Color.WHITE, null); // changes transparent to white
 		
+		if ( MAXWIDTH < 200 || MAXHEIGHT < 200 || MAXWIDTH > 3000)
+			throw new IOException ("Server config error: Max Width/Height not set or below 200.");
+		
 		// resize if width greater than MAXWIDTH
-		if (result.getWidth() > MAXWIDTH) {
+		if (doResize && result.getWidth() > MAXWIDTH) {
 			return resize (result);
 		} else return result;
 	}
 	
 	public byte[] cropImage ( MultipartFile file, Crop crop ) throws IOException {
 
-			return cropImage ( file.getBytes(), crop );
+			return cropImage ( file.getBytes(), crop, false );
 
+	}
+	
+	public byte[] cropAndResizeImage ( MultipartFile file, Crop crop ) throws IOException {
+		
+		return cropImage ( file.getBytes(), crop, true );
+		
 	}
 	
 	/**
@@ -112,17 +124,18 @@ public class ImageService {
 	 */
 	public BufferedImage resize ( BufferedImage bufferedImage ) throws IOException {
 		
+
 		// https://stackoverflow.com/questions/9417356/bufferedimage-resize
-		double resizeRatio =  bufferedImage.getWidth() / MAXWIDTH;
+		double resizeRatio =  (double) bufferedImage.getWidth() / (double) MAXWIDTH;
 		int newWidth = (int) (bufferedImage.getWidth() / resizeRatio);
 		int newHeight = (int) (bufferedImage.getHeight() / resizeRatio);
 		
 		Image tmp = bufferedImage.getScaledInstance( newWidth, newHeight , Image.SCALE_SMOOTH);
 		
-		BufferedImage newBufferedImage = new BufferedImage( newWidth, newHeight, BufferedImage.TYPE_INT_ARGB);
+		BufferedImage newBufferedImage = new BufferedImage( newWidth, newHeight, BufferedImage.TYPE_INT_RGB);
 		
 		Graphics2D g2d = newBufferedImage.createGraphics();
-		g2d.drawImage( tmp, 0, 0, null);
+		g2d.drawImage( tmp, 0, 0, newWidth, newHeight, null);
 		g2d.dispose();
 		
 		return newBufferedImage;

@@ -20,12 +20,15 @@ public class MediaCategory {
 	
 	private String url;
 	
+	private String name;
+	private String description;
+	
 	public enum Type {
 		IMAGE,
 		VIDEO
 	};
 	
-	private Type type;
+	private Type type = Type.IMAGE;
 	
 	private Date created = new Date();
 
@@ -59,6 +62,22 @@ public class MediaCategory {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 
 	

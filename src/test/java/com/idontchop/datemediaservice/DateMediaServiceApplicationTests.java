@@ -1,5 +1,7 @@
 package com.idontchop.datemediaservice;
 
+import static org.junit.jupiter.api.Assertions.assertTrue;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -9,6 +11,7 @@ import com.idontchop.datemediaservice.entities.MediaCategory;
 import com.idontchop.datemediaservice.repositories.LikeTypeRepository;
 import com.idontchop.datemediaservice.repositories.MediaCategoryRepository;
 import com.idontchop.datemediaservice.repositories.MediaRepository;
+import com.idontchop.datemediaservice.services.DataApiService;
 
 @SpringBootTest
 class DateMediaServiceApplicationTests {
@@ -21,6 +24,9 @@ class DateMediaServiceApplicationTests {
 	
 	@Autowired
 	LikeTypeRepository likeTypeRepository;
+	
+	@Autowired
+	DataApiService dataApiService;
 
 	@Test
 	void contextLoads() {
@@ -29,15 +35,15 @@ class DateMediaServiceApplicationTests {
 	@Test
 	void createDb () {
 		
-		MediaCategory mc = new MediaCategory();
-		mc.setType(MediaCategory.Type.IMAGE);
-		mc.setUrl("http://localhost:8980/image/");
 		
-		mediaCategoryRepository.save(mc);
+	}
+	
+	@Test
+	void testApi () {
 		
-		LikeType lt = new LikeType();
-		lt.setName("token");
+		String s = dataApiService.deleteImage("none").block();
 		
-		likeTypeRepository.save(lt);
+		assertTrue(s.equals(""));
+		
 	}
 }

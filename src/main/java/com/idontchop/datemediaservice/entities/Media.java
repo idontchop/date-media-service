@@ -9,6 +9,9 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.NotEmpty;
+
+import com.sun.istack.NotNull;
 
 @Entity
 public class Media {
@@ -19,8 +22,11 @@ public class Media {
 	@GeneratedValue ( strategy = GenerationType.IDENTITY)
 	private long id;
 	
+	@NotNull
+	@NotEmpty
 	private String owner;
 
+	@NotNull
 	@ManyToOne ( fetch = FetchType.EAGER)
 	@JoinColumn (name = "category_id")
 	private MediaCategory category;
@@ -35,7 +41,7 @@ public class Media {
 	
 	private int priority;			// preference in user profile / feed
 	
-	private String description;		// user supplied
+	private String description = "";		// user supplied
 	
 	private Date created = new Date();
 	
@@ -48,6 +54,10 @@ public class Media {
 	public void setId(long id) {
 		this.id = id;
 	}
+	
+	public String getOwner() {
+		return owner;
+	}
 
 	public String getUsername() {
 		return owner;
@@ -56,12 +66,16 @@ public class Media {
 	public void setUsername(String username) {
 		this.owner = username;
 	}
+	
+	public void setOwner(String owner) {
+		this.owner = owner;
+	}
 
-	public MediaCategory getMediaType() {
+	public MediaCategory getCategory() {
 		return category;
 	}
 
-	public void setMediaType(MediaCategory mediaType) {
+	public void setCategory(MediaCategory mediaType) {
 		this.category = mediaType;
 	}
 
@@ -97,12 +111,12 @@ public class Media {
 		this.created = created;
 	}
 
-	public String getHref() {
+	public String getDataId() {
 		return dataId;
 	}
 
-	public void setHref(String href) {
-		this.dataId = href;
+	public void setDataId(String dataId) {
+		this.dataId = dataId;
 	}
 	
 	

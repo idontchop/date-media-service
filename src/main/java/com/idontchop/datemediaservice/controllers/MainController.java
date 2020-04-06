@@ -16,6 +16,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.idontchop.datemediaservice.dtos.MediaDataDto;
 import com.idontchop.datemediaservice.dtos.RestMessage;
+import com.idontchop.datemediaservice.entities.Media;
+import com.idontchop.datemediaservice.entities.MediaCategory;
 import com.idontchop.datemediaservice.services.DataApiService;
 
 import reactor.core.publisher.Mono;
@@ -26,7 +28,7 @@ public class MainController {
 	@Autowired
 	DataApiService dataApiService;
 	
-	@PostMapping ( "/testMedia" )
+	@PostMapping ( "/testMediaData" )
 	public Mono<MediaDataDto> newMedia (
 			@RequestParam("file") MultipartFile file,
 			@RequestParam( value = "owner", required=true) String owner) throws IOException {
@@ -35,6 +37,20 @@ public class MainController {
 		
 		return dataApiService.saveImage(owner, file.getBytes());
 		
+	}
+	
+	@GetMapping ( "/testMedia")
+	public Media testMedia () {
+		Media m = new Media();
+		MediaCategory mc = new MediaCategory();
+		mc.setId(1L);
+		mc.setName("test");
+		mc.setUrl("mediadata-service");
+		m.setCategory(mc);
+		m.setDataId("5e8924ee9072d9381990584b");
+		m.setDescription("test description");
+		m.setOwner("1");
+		return m;
 	}
 	
 	@Value ("${server.port}")
