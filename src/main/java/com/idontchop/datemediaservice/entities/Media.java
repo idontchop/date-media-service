@@ -39,6 +39,16 @@ public class Media {
 	
 	private Display display 	= Display.PROFILE;
 	
+	public enum Validate {
+		APPROVED,
+		QUEUED,
+		REJECTED
+	}
+	
+	private Validate validate = Validate.QUEUED;
+	
+	private boolean active = true;
+	
 	private int priority;			// preference in user profile / feed
 	
 	private String description = "";		// user supplied
@@ -133,6 +143,22 @@ public class Media {
 
 	public void setDataId(String dataId) {
 		this.dataId = dataId;
+	}
+
+	public Validate getValidate() {
+		return validate;
+	}
+
+	public void setValidate(Validate validate) {
+		this.validate = validate;
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
 	}
 	
 	
