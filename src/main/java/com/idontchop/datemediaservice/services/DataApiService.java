@@ -1,5 +1,7 @@
 package com.idontchop.datemediaservice.services;
 
+import java.io.IOException;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
@@ -67,12 +69,13 @@ public class DataApiService {
 						@Override public String getFilename() {return "f.jpg";}	// need a filename for media-data api
 					}).with("owner",owner).with("id",id) )
 				.retrieve()
+				.onStatus(HttpStatus::is4xxClientError, response -> Mono.just(new IllegalArgumentException(id)))
 				.bodyToMono(MediaDataDto.class);
 		
 		return dto;
 	}
 	
-	public Mono<String> deleteImage ( String id ) {
+	public Mono<Void> deleteImage ( String id ) throws IOException, IllegalArgumentException {
 		
 		WebClient webClient = WebClient.builder()
 				.baseUrl(dataUrl)
@@ -80,10 +83,13 @@ public class DataApiService {
 				.build();
 		
 		return webClient.delete()
-			.uri ( uriBuilder -> uriBuilder.path(id).build() )
-			.retrieve()
+			.uri ( uriBuilder -> uriBuilder.pathSegment(id).build() )
+			.retrieve()		
+			
 			.onStatus(HttpStatus::is4xxClientError, response -> Mono.just(new IllegalArgumentException(id)))
-			.bodyToMono(String.class);
+			.onStatus(HttpStatus::is5xxServerError, response -> Mono.just(new IOException("500")))
+			
+			.bodyToMono(Void.class);
 			
 	}
 

@@ -47,6 +47,22 @@ public class Media {
 	
 	private String dataId;			// id on data server
 
+	/**
+	 * Receives a media class and updates only the metadata:
+	 * 
+	 * category, display, priority, description
+	 * 
+	 * @param newMedia
+	 */
+	public void updateMedia (Media newMedia) {
+		
+		this.category = newMedia.getCategory();
+		this.display = newMedia.getDisplay();
+		this.priority = newMedia.getPriority();
+		this.description = newMedia.getDescription();
+		
+	}
+	
 	public long getId() {
 		return id;
 	}

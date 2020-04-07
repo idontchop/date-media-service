@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,15 +19,37 @@ import com.idontchop.datemediaservice.dtos.MediaDataDto;
 import com.idontchop.datemediaservice.dtos.RestMessage;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.entities.MediaCategory;
+import com.idontchop.datemediaservice.services.CategoryService;
 import com.idontchop.datemediaservice.services.DataApiService;
 
 import reactor.core.publisher.Mono;
 
+/**
+ *  /category/  GET
+ *  /category/{id} GET
+ *  
+ * @author micro
+ *
+ */
 @RestController
 public class MainController {
 	
 	@Autowired
 	DataApiService dataApiService;
+	
+	@Autowired
+	CategoryService categoryService;
+	
+	@GetMapping ("/category")
+	public Iterable<MediaCategory> getCategoryList() {
+		return categoryService.getCategoryList();
+	}
+	
+	@GetMapping ("/category/{id}")
+	public MediaCategory getCategory(
+			@PathVariable ( name = "id", required = true) long id) {
+		return categoryService.getCategory(id);
+	}
 	
 	@PostMapping ( "/testMediaData" )
 	public Mono<MediaDataDto> newMedia (
