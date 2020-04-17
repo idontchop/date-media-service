@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -40,6 +42,8 @@ import com.idontchop.datemediaservice.services.LikeService;
  */
 @RestController
 public class LikeController {
+	
+	Logger logger = LoggerFactory.getLogger(LikeController.class);
 	
 	@Autowired
 	LikeService likeService;
@@ -101,7 +105,8 @@ public class LikeController {
 	@ExceptionHandler (NoSuchElementException.class)
 	@ResponseStatus ( value = HttpStatus.NOT_FOUND, reason = "Requested like not found" )
 	public void noSuchElementExceptionHandler () {
-		// TODO: log
+		logger.debug("Caught NoSuchElement in Like Controller.");
+		// TODO: more info?
 	}
 
 }
