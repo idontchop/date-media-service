@@ -3,6 +3,9 @@ package com.idontchop.datemediaservice.controllers;
 import java.io.IOException;
 import java.net.NetworkInterface;
 import java.net.SocketException;
+import java.util.Set;
+
+import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -10,23 +13,29 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.idontchop.datemediaservice.dtos.MediaDataDto;
+import com.idontchop.datemediaservice.dtos.ReduceRequest;
 import com.idontchop.datemediaservice.dtos.RestMessage;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.entities.MediaCategory;
 import com.idontchop.datemediaservice.services.CategoryService;
 import com.idontchop.datemediaservice.services.DataApiService;
+import com.idontchop.datemediaservice.services.ReduceService;
 
 import reactor.core.publisher.Mono;
 
 /**
  *  /category/  GET
  *  /category/{id} GET
+ *  
+ *   
+ *   /reduce POST
  *  
  * @author micro
  *
@@ -39,6 +48,16 @@ public class MainController {
 	
 	@Autowired
 	CategoryService categoryService;
+	
+	@Autowired
+	ReduceService reduceService;
+	
+	@PostMapping ("/api/reduce")
+	public Set<String> reduce (@RequestBody @Valid ReduceRequest reduceRequest ) {
+		
+		return reduceService.reduceHasMedia(reduceRequest.getPotentials());
+		
+	}
 	
 	@GetMapping ("/category")
 	public Iterable<MediaCategory> getCategoryList() {

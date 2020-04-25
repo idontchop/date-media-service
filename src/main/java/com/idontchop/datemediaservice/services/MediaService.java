@@ -5,14 +5,18 @@ import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.idontchop.datemediaservice.dtos.MediaDataDto;
+import com.idontchop.datemediaservice.dtos.ProfileMediaDto;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.entities.MediaCategory;
 import com.idontchop.datemediaservice.repositories.MediaRepository;
+
+import javassist.NotFoundException;
 
 @Service
 public class MediaService {
@@ -105,5 +109,14 @@ public class MediaService {
 	
 	public List<Media> getMediaByOwner(String owner) {
 		return mediaRepository.findAllByOwner(owner);
+	}
+	
+	public List<ProfileMediaDto> getProfileMediaByOwner (String owner) {
+		List<Media> mediaList = getMediaByOwner(owner);
+		
+		return mediaList.stream()
+				.filter( media -> media.isProfileApproved() )
+				.map( media -> ProfileMediaDto.from(media))
+				.collect(Collectors.toList());
 	}
 }

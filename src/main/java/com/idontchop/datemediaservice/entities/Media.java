@@ -161,5 +161,30 @@ public class Media {
 		this.active = active;
 	}
 	
+	public boolean isValidated () {
+		return validate == Validate.APPROVED;
+	}
+
+	/**
+	 * Returns true if this media is active, validated, and profile.
+	 * @return
+	 */
+	public boolean isProfileApproved() {
+		return ( active && (display == Display.PROFILE || display == Display.PROFILEONLY )
+				&& validate == Validate.APPROVED);
+	}
+
+	/**
+	 * Returns true if media can be shown.
+	 * @return
+	 */
+	public boolean isApproved() {
+		return ( active && isValidated());
+	}
+	
+	public boolean isFeedApproved() {
+		return ( active && isValidated() && display == Display.FEED );
+	}
+	
 	
 }
