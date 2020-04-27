@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.idontchop.datemediaservice.dtos.ProfileMediaDto;
+import com.idontchop.datemediaservice.dtos.UserProfileDto;
 import com.idontchop.datemediaservice.services.MediaService;
+import com.idontchop.datemediaservice.services.ProfileService;
 
 /**
  * Handles returning media for public calls.
@@ -24,6 +26,9 @@ public class ProfileMediaController {
 	@Autowired
 	MediaService mediaService;
 	
+	@Autowired
+	ProfileService profileService;
+	
 	/**
 	 * Returns a public-info array of the owner's media.
 	 * 
@@ -38,5 +43,10 @@ public class ProfileMediaController {
 		
 		return mediaService.getProfileMediaByOwner(owner);
 		
+	}
+	
+	@GetMapping ( "/api/profile/{names}")
+	public List<UserProfileDto> getProfilesInList ( @PathVariable (name = "names", required = true) List<String> names) {
+		return profileService.findProfilesInList(names);
 	}
 }
