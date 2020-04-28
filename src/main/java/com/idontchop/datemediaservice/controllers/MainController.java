@@ -53,9 +53,15 @@ public class MainController {
 	ReduceService reduceService;
 	
 	@PostMapping ("/api/reduce")
-	public Set<String> reduce (@RequestBody @Valid ReduceRequest reduceRequest ) {
+	public Iterable<String> reduce (@RequestBody @Valid ReduceRequest reduceRequest ) {
 		
-		return reduceService.reduceHasMedia(reduceRequest.getPotentials());
+		// switch here since reducing with a count is more expensive
+		if ( reduceRequest.getMediaCount() == 0)
+			return reduceService.reduceNoMedia(reduceRequest.getPotentials());
+		else if ( reduceRequest.getMediaCount() == 1 )
+			return reduceService
+					.reduceHasMediaCount( reduceRequest.getPotentials(), reduceRequest.getMediaCount());
+		else return reduceService.reduceHasMedia(reduceRequest.getPotentials());
 		
 	}
 	

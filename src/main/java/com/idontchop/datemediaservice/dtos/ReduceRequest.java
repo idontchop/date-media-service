@@ -15,6 +15,8 @@ public class ReduceRequest {
 	// Using the name, the service will check the potentials against the interestedins
 	@NotEmpty(message = "Need at least one potential")
 	List<String> potentials;
+	
+	private int mediaCount = 1;
 
 	public String getName() {
 		return name;
@@ -30,6 +32,14 @@ public class ReduceRequest {
 
 	public void setPotentials(List<String> potentials) {
 		this.potentials = potentials;
+	}
+
+	public int getMediaCount() {
+		return mediaCount;
+	}
+
+	public void setMediaCount(int mediaCount) {
+		this.mediaCount = mediaCount;
 	}
 	
 	
