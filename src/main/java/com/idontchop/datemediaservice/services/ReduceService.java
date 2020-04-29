@@ -35,6 +35,13 @@ public class ReduceService {
 		
 	}
 	
+	/**
+	 * reduceHasMediaCount not working?
+	 * 
+	 * @param potentials
+	 * @param mediaCount
+	 * @return
+	 */
 	public Set<String> reduceHasMediaCount ( List <String> potentials, int mediaCount ) {
 		
 		List<String> mediaList = mediaRepository.findAllByOwnerIn(potentials)

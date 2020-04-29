@@ -59,9 +59,9 @@ public class MainController {
 		if ( reduceRequest.getMediaCount() == 0)
 			return reduceService.reduceNoMedia(reduceRequest.getPotentials());
 		else if ( reduceRequest.getMediaCount() == 1 )
-			return reduceService
-					.reduceHasMediaCount( reduceRequest.getPotentials(), reduceRequest.getMediaCount());
-		else return reduceService.reduceHasMedia(reduceRequest.getPotentials());
+			return reduceService.reduceHasMedia(reduceRequest.getPotentials());
+		else return reduceService
+				.reduceHasMediaCount( reduceRequest.getPotentials(), reduceRequest.getMediaCount());
 		
 	}
 	
