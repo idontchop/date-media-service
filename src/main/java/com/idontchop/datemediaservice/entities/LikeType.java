@@ -16,6 +16,8 @@ public class LikeType {
 	
 	private String name;
 	
+	private int cost;
+	
 	private Date created = new Date();
 
 	public long getId() {
@@ -40,6 +42,14 @@ public class LikeType {
 
 	public void setCreated(Date created) {
 		this.created = created;
+	}
+
+	public int getCost() {
+		return cost;
+	}
+
+	public void setCost(int cost) {
+		this.cost = cost;
 	}
 	
 	

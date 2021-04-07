@@ -12,6 +12,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity (name = "user_like")
 public class Like {
 	
@@ -24,6 +26,7 @@ public class Like {
 	@NotNull
 	@ManyToOne ( fetch = FetchType.EAGER)
 	@JoinColumn (name = "media_id")
+	@JsonIgnore
 	private Media media;
 	
 	@NotNull
@@ -32,14 +35,15 @@ public class Like {
 	private LikeType likeType;
 	
 	@NotEmpty
-	private String owner;
-	
+	private String owner;		// Owner of this Like, not the media.
+		
 	private Date created = new Date();
 	
 	public Like (String owner, LikeType likeType, Media media) {
 		this.owner = owner;
 		this.likeType = likeType;
 		this.media = media;
+
 	}
 
 	public long getId() {
@@ -81,7 +85,10 @@ public class Like {
 	public void setOwner(String owner) {
 		this.owner = owner;
 	}
+
 	
-	
+	public long getMediaId() {
+		return media.getId();
+	}
 	
 }

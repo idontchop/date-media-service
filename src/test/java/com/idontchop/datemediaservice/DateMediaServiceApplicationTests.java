@@ -12,10 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.idontchop.datemediaservice.entities.HiddenRequirements;
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.entities.LikeType;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.entities.MediaCategory;
+import com.idontchop.datemediaservice.repositories.HiddenRequirementsRepository;
 import com.idontchop.datemediaservice.repositories.LikeRepository;
 import com.idontchop.datemediaservice.repositories.LikeTypeRepository;
 import com.idontchop.datemediaservice.repositories.MediaCategoryRepository;
@@ -39,6 +41,9 @@ class DateMediaServiceApplicationTests {
 	
 	@Autowired
 	LikeRepository likeRepository;
+	
+	@Autowired
+	HiddenRequirementsRepository hiddenRepository;
 
 	@Test
 	void contextLoads() {
@@ -47,6 +52,24 @@ class DateMediaServiceApplicationTests {
 	@Test
 	void createDb () {
 		
+		
+	}
+	
+	@Test
+	void loadHidden () {
+		Media media3 = mediaRepository.findById(3L).orElseThrow();
+		Media media2 = mediaRepository.findById(2L).orElseThrow();
+		
+		HiddenRequirements hr = new HiddenRequirements();
+		hr.getReferencedMedia().add(media2);
+		hr.setOwner(media3.getOwner());
+		hr.setRequiredScore(33);
+		
+		hiddenRepository.save(hr);
+		
+		media3.setHidden(hr);
+		
+		mediaRepository.save(media3);
 		
 	}
 	

@@ -1,5 +1,6 @@
 package com.idontchop.datemediaservice.controllers;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Optional;
@@ -16,7 +17,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
+import com.idontchop.datemediaservice.dtos.LikesByMedia;
 import com.idontchop.datemediaservice.dtos.RestMessage;
+import com.idontchop.datemediaservice.dtos.RestWrapper;
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.services.LikeService;
 
@@ -60,7 +63,11 @@ public class LikeController {
 				.add("likes", String.valueOf(likeCount));
 	}
 	
-	@GetMapping ("/like/{owner}/{mediaId}")
+	/*
+	 * Old Like endpings (olike) expect a proxy service to send user without JWT
+	 */
+	
+	@GetMapping ("/olike/{owner}/{mediaId}")
 	public List<Like> getLike (
 			@PathVariable( name = "owner", required = true) String owner,
 			@PathVariable( name = "mediaId", required = false ) Optional<Long> mediaId  ) {
@@ -77,7 +84,7 @@ public class LikeController {
 		
 	}
 	
-	@PostMapping ("/like/{owner}/{mediaId}/{likeType}")
+	@PostMapping ("/olike/{owner}/{mediaId}/{likeType}")
 	public Like newLike (
 			@PathVariable( name = "owner", required = true) String owner,
 			@PathVariable( name = "mediaId", required = true) long mediaId,
@@ -94,12 +101,66 @@ public class LikeController {
 		return likeService.newLike(owner, likeTypeId, mediaId);
 	}
 	
-	@DeleteMapping ( "/like/{owner}/{mediaId}")
+	@DeleteMapping ( "/olike/{owner}/{mediaId}")
 	public void deleteLike (
 			@PathVariable( name = "owner", required = true) String owner,
 			@PathVariable( name = "mediaId", required = true) long mediaId) {
 		
-		likeService.deleteLike(owner, mediaId);
+		likeService.deleteLike(owner, mediaId, "token");
+	}
+	
+	/*
+	 * Like endpoints use the User Principal
+	 */
+	
+	/**
+	 * This endpoint is used after the feed posts are downloaded.
+	 * 
+	 * This fills into two points of data:
+	 * 
+	 * ( ) Total likes on each media in the list.
+	 * (*) Likes made by the current user on each media in the list.
+	 * 
+	 * @param mediaIds
+	 * @param principal
+	 * @return
+	 */
+	@GetMapping ("/likes/{mediaIds}")
+	public RestWrapper getLikesByMedia (
+			@PathVariable( name = "mediaIds", required = true) List<Long> mediaIds,
+			Principal principal) {
+		System.out.println(principal.getName());
+		List<Like> likes = likeService.getLikeByOwnerAndId(principal.getName(), mediaIds);
+		List<LikesByMedia> likesByMedia = likeService.getLikesByMedia(mediaIds);
+		
+		return RestWrapper.build("like_counts", likesByMedia).add("user_likes", likes);
+	}
+	
+	
+	@PostMapping ("/like/{mediaId}/{likeType}")
+	public Like newLikeWithPrincipal (
+			@PathVariable( name = "mediaId", required = true) long mediaId,
+			@PathVariable( name = "likeType", required = true) String likeType,
+			Principal principal) {
+		
+		// so likeType can be passed as name or id
+		long likeTypeId;
+		try {
+			likeTypeId = Long.parseLong(likeType);
+		} catch (NumberFormatException e) {
+			likeTypeId = likeService.findLikeTypeId(likeType);
+		}
+		
+		return likeService.newLike(principal.getName(), likeTypeId, mediaId);
+	}
+	
+	@DeleteMapping ( "/like/{mediaId}/{likeType}")
+	public void deleteLike (
+			@PathVariable( name = "mediaId", required = true) long mediaId,
+			@PathVariable( name = "likeType", required = true) String likeType,
+			Principal principal) {
+		
+		likeService.deleteLike(principal.getName(), mediaId, likeType);
 	}
 	
 	@ExceptionHandler (NoSuchElementException.class)

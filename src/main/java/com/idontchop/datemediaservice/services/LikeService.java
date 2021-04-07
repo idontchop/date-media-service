@@ -7,6 +7,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.idontchop.datemediaservice.dtos.LikesByMedia;
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.entities.LikeType;
 import com.idontchop.datemediaservice.entities.Media;
@@ -55,11 +56,15 @@ public class LikeService {
 		return likeRepository.findByOwnerAndMedia_Id(owner, mediaId).orElseThrow();
 	}
 	
+	public List<Like> getLikeByOwnerAndId ( String owner, List<Long> mediaIds ) {
+		return likeRepository.findByOwnerAndMedia_IdIn(owner, mediaIds);
+	}
+	
 	
 	public Like newLike ( String owner, long likeTypeId, long mediaId) {
 		
 		// check if already exists
-		if ( likeRepository.findByOwnerAndMedia_Id(owner, mediaId).isPresent() ) {
+		if ( likeRepository.findByOwnerAndMedia_IdAndLikeType_Id(owner, mediaId, likeTypeId).isPresent() ) {
 			throw new IllegalArgumentException("Like with " + owner + " and " + mediaId + " already exists.");
 		}
 		
@@ -79,10 +84,10 @@ public class LikeService {
 	 * @param owner
 	 * @param mediaId
 	 */
-	public void deleteLike ( String owner, long mediaId ) {
+	public void deleteLike ( String owner, long mediaId, String likeType ) {
 		
 		Optional<Like> likeOpt = likeRepository.findByOwnerAndMedia_Id(owner, mediaId);
-		if ( likeOpt.isEmpty() ) {
+		if ( likeOpt.isEmpty() || likeOpt.get().getLikeType().getName() != likeType ) {
 			throw new NoSuchElementException ("Like with " + owner + " mediaId: " + mediaId + " doesn't exist.");
 		}
 		
@@ -93,6 +98,10 @@ public class LikeService {
 		
 		LikeType likeType = likeTypeRepository.findByName(name).orElseThrow();
 		return likeType.getId();
+	}
+	
+	public List<LikesByMedia> getLikesByMedia (List<Long> mediaIds) {
+		return likeRepository.countLikesByMedia(mediaIds);
 	}
 
 }

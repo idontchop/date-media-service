@@ -11,9 +11,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotEmpty;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import com.sun.istack.NotNull;
 
 @Entity
+@JsonInclude(Include.NON_NULL)
 public class Media {
 	
 	public Media() {}
@@ -56,6 +59,9 @@ public class Media {
 	private Date created = new Date();
 	
 	private String dataId;			// id on data server
+	
+	@ManyToOne
+	private HiddenRequirements hidden = null;
 
 	/**
 	 * Receives a media class and updates only the metadata:
@@ -184,6 +190,14 @@ public class Media {
 	
 	public boolean isFeedApproved() {
 		return ( active && isValidated() && display == Display.FEED );
+	}
+
+	public HiddenRequirements getHidden() {
+		return hidden;
+	}
+
+	public void setHidden(HiddenRequirements hidden) {
+		this.hidden = hidden;
 	}
 	
 	

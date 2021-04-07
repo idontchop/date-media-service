@@ -34,3 +34,5 @@ logging:
     hibernate:
       SQL: debug
     com: debug
+jwt:
+  secret: SecretKey1
