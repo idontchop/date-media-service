@@ -1,5 +1,7 @@
 package com.idontchop.datemediaservice.services;
 
+import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Date;
 
 import javax.servlet.http.HttpServletRequest;
@@ -13,6 +15,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
 
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.SignatureAlgorithm;
 
 @Order(1)
 @Component
@@ -50,6 +53,29 @@ public class JwtTokenService {
 		
 		logger.info("Unauthenticated Request");
 		return null;
+	}
+	
+	/**
+	 * Supplies a JWT Token for the given user.
+	 * 
+	 * Sets subject to username
+	 * 
+	 * Sets one claim: 
+	 * 		1) Expiration time from properties
+	 * 		
+	 * 
+	 * @param name
+	 * @return the token string
+	 */
+	public String buildToken ( String name ) {
+		
+		LocalDateTime ldt = LocalDateTime.now();
+		ldt = ldt.plusHours( EXPIRATIONTIME );
+		
+		return Jwts.builder().setSubject(name)		
+			.setExpiration( Date.from( ldt.atZone( ZoneId.systemDefault() ).toInstant()  ))
+			.signWith(SignatureAlgorithm.HS512, SIGNINGKEY)
+			.compact();
 	}
 
 	public  String getSIGNINGKEY() { 

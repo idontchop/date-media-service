@@ -18,9 +18,18 @@ public interface LikeRepository extends CrudRepository<Like,Long> {
 	List<Like> findAllByMedia_Id(long id);
 	Long countByMedia_Id(long id);
 	
-	//@Query("SELECT l.media_id  FROM Like l WHERE l.media_id IN :mediaIds GROUP BY l.media_id")
-	@Query(value = "SELECT media_id as id, COUNT(*) as count, SUM(user_like.cost) as cost"
-			+ " FROM user_like WHERE media_id IN ?1 GROUP BY media_id", nativeQuery=true)
+
+	@Query(value = "SELECT media_id as id, COUNT(*) as count, SUM(lt.cost) as cost "
+			+ "FROM user_like as ul JOIN like_type as lt on ul.like_type_id = lt.id "
+			+ "WHERE media_id IN ?1 "
+			+ "GROUP BY media_id", nativeQuery=true)
 	List<LikesByMedia> countLikesByMedia(List<Long> mediaIds);
+	
+
+	@Query(value = "SELECT media_id as id, COUNT(*) as count, SUM(lt.cost) as cost "
+			+ "FROM user_like as ul JOIN like_type as lt on ul.like_type_id = lt.id "
+			+ "WHERE media_id IN ?1 AND ul.owner = ?2 "
+			+ "GROUP BY media_id", nativeQuery=true)
+	List<LikesByMedia> countLikesByMediaAndUser(List<Long> mediaIds, String username);
 	
 }

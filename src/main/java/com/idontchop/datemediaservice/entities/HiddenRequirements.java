@@ -8,9 +8,11 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.OneToMany;
+import javax.persistence.OneToOne;
 import javax.validation.constraints.NotEmpty;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
@@ -29,6 +31,11 @@ public class HiddenRequirements {
 	@NotEmpty
 	@JsonIgnore
 	private String owner;
+	
+	@OneToOne
+	@JoinColumn
+	@JsonIgnore
+	private Media hiddenMedia;
 	
 	// Contains list of Ids that are used to determine if score reached.
 	// This will usually be media in previous post but doesn't have to be
@@ -85,4 +92,15 @@ public class HiddenRequirements {
 		return referencedMedia.stream().map( m -> m.getId()			
 		).collect(Collectors.toList());
 	}
+
+	@JsonIgnore
+	public Media getHiddenMedia() {
+		return hiddenMedia;
+	}
+
+	public void setHiddenMedia(Media hiddenMedia) {
+		this.hiddenMedia = hiddenMedia;
+	}
+	
+	
 }

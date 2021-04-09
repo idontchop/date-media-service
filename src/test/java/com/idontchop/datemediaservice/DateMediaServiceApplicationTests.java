@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 
+import com.idontchop.datemediaservice.dtos.LikesByMedia;
 import com.idontchop.datemediaservice.entities.HiddenRequirements;
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.entities.LikeType;
@@ -26,22 +27,22 @@ import com.idontchop.datemediaservice.services.DataApiService;
 
 @SpringBootTest
 class DateMediaServiceApplicationTests {
-	
+
 	@Autowired
 	MediaCategoryRepository mediaCategoryRepository;
-	
+
 	@Autowired
 	MediaRepository mediaRepository;
-	
+
 	@Autowired
 	LikeTypeRepository likeTypeRepository;
-	
+
 	@Autowired
 	DataApiService dataApiService;
-	
+
 	@Autowired
 	LikeRepository likeRepository;
-	
+
 	@Autowired
 	HiddenRequirementsRepository hiddenRepository;
 
@@ -50,62 +51,53 @@ class DateMediaServiceApplicationTests {
 	}
 
 	@Test
-	void createDb () {
-		
-		
-	}
-	
-	@Test
-	void loadHidden () {
-		Media media3 = mediaRepository.findById(3L).orElseThrow();
-		Media media2 = mediaRepository.findById(2L).orElseThrow();
-		
-		HiddenRequirements hr = new HiddenRequirements();
-		hr.getReferencedMedia().add(media2);
-		hr.setOwner(media3.getOwner());
-		hr.setRequiredScore(33);
-		
-		hiddenRepository.save(hr);
-		
-		media3.setHidden(hr);
-		
-		mediaRepository.save(media3);
-		
-	}
-	
-	@Test
-	void findAllByOwner () {
-		List<String> owners = List.of("username","none");
-		
-		Set<Media> mediaList = mediaRepository.findAllByOwnerIn(owners);
-		
-		Set<String> ownerSet = mediaList.stream()
-				.map( media -> media.getOwner())
-				.collect(Collectors.toSet());
-		
-		assertEquals(1,ownerSet.size());
+	void createDb() {
+
 	}
 
-	
-	void createLikes () {
+	@Test
+	void loadHidden() {
+
+		assertTrue(hiddenRepository.findByHiddenMedia_Id(3L).orElseThrow().getOwner().equals("username"));
+		/*
+		 * List<LikesByMedia> l = likeRepository.countLikesByMediaAndUser(List.of(3L),
+		 * "33"); assertEquals(l.size(), 1); assertTrue(l.get(0).getCost() == 0);
+		 */
 		
+		
+
+	}
+
+	@Test
+	void findAllByOwner() {
+		List<String> owners = List.of("username", "none");
+
+		Set<Media> mediaList = mediaRepository.findAllByOwnerIn(owners);
+
+		Set<String> ownerSet = mediaList.stream().map(media -> media.getOwner()).collect(Collectors.toSet());
+
+		assertEquals(1, ownerSet.size());
+	}
+
+	void createLikes() {
+
 		Media media1 = mediaRepository.findById(1L).orElseThrow();
 		LikeType likeType = likeTypeRepository.findById(1L).orElseThrow();
-		
+
 		Like newLike = new Like();
 		newLike.setMedia(media1);
 		newLike.setLikeType(likeType);
 		newLike.setOwner("4");
-		
+
 		likeRepository.save(newLike);
 	}
-	
+
 	@Test
-	void testLikes () {
-		
-		//assertEquals (3, likeRepository.countByMedia_Id(1L));
-		//assertEquals (1, likeRepository.findAllByOwner("2").size());
-		//assertEquals (3, likeRepository.findAllByMedia_Id(1L).size());
-		
+	void testLikes() {
+
+		// assertEquals (3, likeRepository.countByMedia_Id(1L));
+		// assertEquals (1, likeRepository.findAllByOwner("2").size());
+		// assertEquals (3, likeRepository.findAllByMedia_Id(1L).size());
+
 	}
 }
