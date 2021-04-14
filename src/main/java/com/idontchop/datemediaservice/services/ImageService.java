@@ -85,6 +85,8 @@ public class ImageService {
 			// by percentage, will need to convert
 			// this is caused by container resizing
 			// TODO: write crop method that produces proper numbers from image width (ex: 50% gives a centralized 50% of the image)
+			crop.setX( (crop.getX() / 100) * w);
+			crop.setY( (crop.getY() / 100) * h);
 			bufferedImage = bufferedImage.getSubimage( (int) crop.getX(), (int) crop.getY(), lfp(crop.getWidth(), w), lfp(crop.getHeight(), h));
 		}
 		

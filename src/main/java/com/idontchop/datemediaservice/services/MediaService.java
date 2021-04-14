@@ -95,7 +95,8 @@ public class MediaService {
 				.orElseThrow();
 		
 		// find category to make sure repository doesnt cascade
-		MediaCategory category = categoryService.getCategory(newMedia.getCategory().getId());		
+		// also disallows changing of category
+		MediaCategory category = categoryService.getCategory(oldMedia.getCategory().getId());		
 		newMedia.setCategory(category);
 		
 		oldMedia.updateMedia(newMedia);

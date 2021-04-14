@@ -1,6 +1,7 @@
 package com.idontchop.datemediaservice.controllers;
 
 import java.io.IOException;
+import java.security.Principal;
 import java.time.Duration;
 import java.util.List;
 import java.util.NoSuchElementException;
@@ -118,7 +119,7 @@ public class MediaController {
 			@RequestParam(name = "file", required = true) MultipartFile file,
 			@RequestParam(name = "media", required = true) String mediaJson,
 			@RequestParam(name = "crop", required = false) String cropJson,
-			HttpServletRequest request) throws IOException {
+			HttpServletRequest request, Principal principal) throws IOException {
 		
 		if (file.isEmpty()) throw new ResponseStatusException(HttpStatus.BAD_REQUEST);
 		
@@ -130,13 +131,16 @@ public class MediaController {
 		} 
 		
 		// crop and Resize, convert to byte[]
-		byte[] newFile = imageService.cropAndResizeImage(file, crop);				
+		byte[] newFile = imageService.cropAndResizeImage(file, crop);
+		//byte[] newFile = file.getBytes(); // for unedited passthrough
+
 		
 		// Get new media
 		Media newMedia = new Media();
 		if ( mediaJson != null ) {
 			newMedia = mapper.readValue(mediaJson, Media.class);
 			validator.validate(newMedia);
+			newMedia.setOwner(principal.getName());
 		} else throw new ResponseStatusException ( HttpStatus.BAD_REQUEST,"Unable to parse Media");
 			
 		if ( request.getMethod().equals("POST") ) {	
