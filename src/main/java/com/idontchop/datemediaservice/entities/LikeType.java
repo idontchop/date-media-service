@@ -16,7 +16,8 @@ public class LikeType {
 	
 	private String name;
 	
-	private int cost;
+	private double costIncoming;
+	private double costOutgoing;	
 	
 	private Date created = new Date();
 
@@ -44,14 +45,22 @@ public class LikeType {
 		this.created = created;
 	}
 
-	public int getCost() {
-		return cost;
+	public double getCostIncoming() {
+		return costIncoming;
 	}
 
-	public void setCost(int cost) {
-		this.cost = cost;
+	public void setCostIncoming(double costIncoming) {
+		this.costIncoming = costIncoming;
 	}
-	
-	
+
+	public double getCostOutgoing() {
+		return costOutgoing;
+	}
+
+	public void setCostOutgoing(double costOutgoing) {
+		this.costOutgoing = costOutgoing;
+	}
+
+
 
 }

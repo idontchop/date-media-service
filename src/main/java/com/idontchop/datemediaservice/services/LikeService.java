@@ -36,6 +36,9 @@ public class LikeService {
 	@Autowired
 	MediaRepository mediaRepository;
 	
+	@Autowired
+	MessageService notificationService;
+	
 	public long getLikeCount(long mediaId) {
 		return likeRepository.countByMedia_Id(mediaId);
 	}
@@ -75,7 +78,9 @@ public class LikeService {
 		// setup new Like
 		Like like = new Like(owner, likeType, media);
 		
-		return likeRepository.save(like);
+		return 
+				notificationService.sendRawLike(
+						likeRepository.save(like));
 	}
 	
 	/**

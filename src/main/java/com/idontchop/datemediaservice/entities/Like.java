@@ -86,9 +86,17 @@ public class Like {
 		this.owner = owner;
 	}
 
-	
+	/**
+	 * Json getters
+	 * 
+	 * media id and media owner returned with json
+	 * @return
+	 */
 	public long getMediaId() {
 		return media.getId();
 	}
 	
+	public String getMediaOwner() {
+		return media.getOwner();
+	}
 }

@@ -1,10 +1,21 @@
 date:
+  like:
+    maxlike_id: 1
   media:
     max-width: 640
     max-height: 320
   data:
     url: http://localhost:8980/media
 spring:
+  kafka:
+    consumer:
+      bootstrap-servers: staging:9092
+      group-id: MediaService
+      auto-offset-reset: earliest
+    properties:
+      spring.json.trusted.packages: "com.lovemire.date-media-service"
+    producer:
+      bootstrap-servers: staging:9092
   jpa:
     hibernate:
       ddl-auto: update
