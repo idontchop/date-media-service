@@ -5,6 +5,7 @@ import java.util.Properties;
 import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
+import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -81,7 +82,9 @@ public class MessageService {
 		KafkaProducer<String, Like> producer = new KafkaProducer<>(properties);
 		
 		// record
-		ProducerRecord<String, Like> record = new ProducerRecord<>(topic, key, like);
+		ProducerRecord<String, Like> record = new ProducerRecord<>(topic, like.getOwner(), like);
+		
+		record.headers().add( new RecordHeader("event-type", "likeCreated".getBytes()));
 		
 		// send
 		producer.send(record, (recordMetaData, e) -> {
