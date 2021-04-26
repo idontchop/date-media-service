@@ -99,6 +99,18 @@ public class LikeService {
 		likeRepository.delete(likeOpt.get());		
 	}
 	
+	/**
+	 * Deletes a like by the Like ID.
+	 * 
+	 * This method called by internal processes and isn't exposed to REST.
+	 * 
+	 * (message from pay service comes back likeInvalid)
+	 * @param id
+	 */
+	public void deleteLike (long id) {
+		likeRepository.deleteById(id);
+	}
+	
 	public long findLikeTypeId(String name) throws NoSuchElementException {
 		
 		LikeType likeType = likeTypeRepository.findByName(name).orElseThrow();
