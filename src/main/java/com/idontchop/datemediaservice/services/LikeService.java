@@ -91,9 +91,9 @@ public class LikeService {
 	 */
 	public void deleteLike ( String owner, long mediaId, String likeType ) {
 		
-		Optional<Like> likeOpt = likeRepository.findByOwnerAndMedia_Id(owner, mediaId, likeType);
+		Optional<Like> likeOpt = likeRepository.findByOwnerAndMedia_IdAndLikeType_Id(owner, mediaId, findLikeTypeId(likeType));
 		if ( likeOpt.isEmpty() || likeOpt.get().getLikeType().getName() != likeType ) {
-			throw new NoSuchElementException ("Like with " + owner + " mediaId: " + mediaId + " doesn't exist.");
+			throw new NoSuchElementException ("Like with " + owner + " mediaId: " + mediaId + " likeType: " + likeType + " doesn't exist.");
 		}
 		
 		likeRepository.delete(likeOpt.get());		
