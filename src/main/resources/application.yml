@@ -23,7 +23,7 @@ spring:
       hibernate:
         dialect: org.hibernate.dialect.MySQL55Dialect
   datasource:
-    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/media_service
+    url: jdbc:mysql://${MYSQL_HOST:localhost}:3306/media_service?serverTimezone=UTC
     username: media
     password: 1234
   data:
