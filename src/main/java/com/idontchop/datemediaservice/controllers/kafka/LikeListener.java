@@ -11,6 +11,7 @@ import org.springframework.messaging.handler.annotation.Header;
 
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.services.LikeService;
+import com.lovemire.messageLibrary.config.enums.LoveMireEvents;
 
 
 public class LikeListener {
@@ -20,7 +21,7 @@ public class LikeListener {
 	
 	Logger logger = LoggerFactory.getLogger(LikeListener.class);
 	
-	@KafkaListener( topics = "Like",
+	@KafkaListener( topics = LoveMireEvents.Topics.LIKE,
 			groupId = "LikeService",
 			properties = {ConsumerConfig.AUTO_OFFSET_RESET_CONFIG + ":earliest"},
 			containerFactory = "likeListenerFactory")

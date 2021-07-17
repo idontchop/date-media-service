@@ -6,11 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.idontchop.datemediaservice.dtos.LikesByMedia;
-import com.idontchop.datemediaservice.dtos.RestWrapper;
 import com.idontchop.datemediaservice.entities.HiddenRequirements;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.repositories.HiddenRequirementsRepository;
 import com.idontchop.datemediaservice.repositories.LikeRepository;
+
+import dtos.RestWrapper;
 
 @Service
 public class HiddenRequirementsService {

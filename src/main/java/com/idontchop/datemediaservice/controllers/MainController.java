@@ -21,7 +21,7 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.idontchop.datemediaservice.dtos.MediaDataDto;
 import com.idontchop.datemediaservice.dtos.ReduceRequest;
-import com.idontchop.datemediaservice.dtos.RestMessage;
+import dtos.RestMessage;
 import com.idontchop.datemediaservice.entities.Media;
 import com.idontchop.datemediaservice.entities.MediaCategory;
 import com.idontchop.datemediaservice.services.CategoryService;

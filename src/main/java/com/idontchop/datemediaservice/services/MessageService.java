@@ -9,11 +9,14 @@ import org.apache.kafka.common.header.internals.RecordHeader;
 import org.apache.kafka.common.serialization.StringSerializer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.kafka.support.serializer.JsonSerializer;
 import org.springframework.stereotype.Service;
 import com.idontchop.datemediaservice.dtos.MessageNotificationDto;
 import com.idontchop.datemediaservice.entities.Like;
+import com.lovemire.messageLibrary.config.enums.LoveMireEvents;
+import com.lovemire.messageLibrary.services.LoveMireMessageService;
 
 /**
  * Responsible for sending messages via kafka. Notifications for likes.
@@ -24,15 +27,36 @@ import com.idontchop.datemediaservice.entities.Like;
 @Service
 public class MessageService {
 	
-	Logger logger = LoggerFactory.getLogger(MessageService.class);
+	@Autowired
+	LoveMireMessageService ms;
 	
-	private final String topic = "Likes";
+	//Logger logger = LoggerFactory.getLogger(MessageService.class);
 	
-	@Value("${spring.kafka.consumer.bootstrap-servers}")
-	private String bootstrap;
+	//private final String topic = LoveMireEvents.Topics.LIKE;
+	
+	//@Value("${spring.kafka.consumer.bootstrap-servers}")
+	//private String bootstrap;
+	
+	
+	public Like deleteLike(Like like) {
+		ms.sendEvent(LoveMireEvents.LIKE_DELETED, like.getOwner(), like);
+		return like;
+	}
+	
+	public Like undoLike(Like like) {
+		ms.sendEvent(LoveMireEvents.LIKE_UNDO, like.getOwner(), like);
+		return like;
+	}
 		
+	/**
+	 * deprecated, now just calls sendRawLike
+	 * @param like
+	 * @return
+	 */
 	public Like sendLike(Like like) {
 		
+		return sendRawLike(like);
+		/*
 		Properties properties = new Properties();
 		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
 		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -56,7 +80,7 @@ public class MessageService {
 		
 		producer.close();
 		
-		return like; // return like unmodified, likely part of save pipeline
+		return like; // return like unmodified, likely part of save pipeline*/
 	}
 	
 	/**
@@ -73,6 +97,9 @@ public class MessageService {
 	 */
 	public Like sendRawLike(Like like) {
 		
+		ms.sendEvent(LoveMireEvents.LIKE_CREATED, like.getOwner(), like);
+		
+		/*
 		Properties properties = new Properties();
 		properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrap);
 		properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class.getName());
@@ -96,7 +123,7 @@ public class MessageService {
 					record.value().getMediaId());
 		});
 		
-		producer.close();
+		producer.close();*/
 		
 		return like; // return like unmodified, likely part of save pipeline
 		

@@ -18,8 +18,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.idontchop.datemediaservice.dtos.LikesByMedia;
-import com.idontchop.datemediaservice.dtos.RestMessage;
-import com.idontchop.datemediaservice.dtos.RestWrapper;
+import dtos.RestMessage;
+import dtos.RestWrapper;
 import com.idontchop.datemediaservice.entities.Like;
 import com.idontchop.datemediaservice.services.LikeService;
 
@@ -106,7 +106,8 @@ public class LikeController {
 			@PathVariable( name = "owner", required = true) String owner,
 			@PathVariable( name = "mediaId", required = true) long mediaId) {
 		
-		likeService.deleteLike(owner, mediaId, "token");
+		// undo is called as this is a user-requested delete
+		likeService.undoLike(owner, mediaId, "token");
 	}
 	
 	/*
@@ -160,7 +161,7 @@ public class LikeController {
 			@PathVariable( name = "likeType", required = true) String likeType,
 			Principal principal) {
 		
-		likeService.deleteLike(principal.getName(), mediaId, likeType);
+		likeService.undoLike(principal.getName(), mediaId, likeType);
 	}
 	
 	@ExceptionHandler (NoSuchElementException.class)

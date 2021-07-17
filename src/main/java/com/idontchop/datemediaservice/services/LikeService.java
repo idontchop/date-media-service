@@ -27,6 +27,9 @@ import com.idontchop.datemediaservice.repositories.MediaRepository;
 @Service
 public class LikeService {
 	
+	/*
+	 * Repositories
+	 */
 	@Autowired
 	LikeRepository likeRepository;
 	
@@ -38,6 +41,12 @@ public class LikeService {
 	
 	@Autowired
 	MessageService messageService;
+	
+	/*
+	 * Libraries
+	 */
+	
+	
 	
 	public long getLikeCount(long mediaId) {
 		return likeRepository.countByMedia_Id(mediaId);
@@ -63,6 +72,15 @@ public class LikeService {
 		return likeRepository.findByOwnerAndMedia_IdIn(owner, mediaIds);
 	}
 	
+	public Like getLikeByOwnerMediaLikeType ( String owner, long mediaId, String likeType ) {
+		
+		Optional<Like> likeOpt = likeRepository.findByOwnerAndMedia_IdAndLikeType_Id(owner, mediaId, findLikeTypeId(likeType));
+		if ( likeOpt.isEmpty() ) {
+			throw new NoSuchElementException ("Like with " + owner + " mediaId: " + mediaId + " likeType: " + likeType + " doesn't exist.");
+		}
+		
+		return likeOpt.get();
+	}
 	
 	public Like newLike ( String owner, long likeTypeId, long mediaId) {
 		
@@ -84,19 +102,34 @@ public class LikeService {
 	}
 	
 	/**
-	 * Owner must be passed for verification.
+	 * Owner must be passed for verification. This isn't called by a user exposed endpoint. For that,
+	 * look at undoLike
 	 * 
 	 * @param owner
 	 * @param mediaId
 	 */
-	public void deleteLike ( String owner, long mediaId, String likeType ) {
+	public Like deleteLike ( String owner, long mediaId, String likeType ) {
 		
-		Optional<Like> likeOpt = likeRepository.findByOwnerAndMedia_IdAndLikeType_Id(owner, mediaId, findLikeTypeId(likeType));
-		if ( likeOpt.isEmpty() || likeOpt.get().getLikeType().getName() != likeType ) {
-			throw new NoSuchElementException ("Like with " + owner + " mediaId: " + mediaId + " likeType: " + likeType + " doesn't exist.");
-		}
+		Like like = getLikeByOwnerMediaLikeType(owner, mediaId, likeType);
 		
-		likeRepository.delete(likeOpt.get());		
+		return deleteLike(like);
+	}
+	
+	/**
+	 * User requested like removed. This always results in deleting the like as well, but
+	 * additionally fires a like_undo message to attempt payment refund.
+	 * 
+	 * @param owner
+	 * @param mediaId
+	 * @param likeType
+	 */
+	public Like undoLike ( String owner, long mediaId, String likeType ) {
+		
+		Like like = getLikeByOwnerMediaLikeType(owner, mediaId, likeType);
+		
+		messageService.undoLike(like);
+		
+		return deleteLike(like);
 	}
 	
 	/**
@@ -107,8 +140,20 @@ public class LikeService {
 	 * (message from pay service comes back likeInvalid)
 	 * @param id
 	 */
-	public void deleteLike (long id) {
-		likeRepository.deleteById(id);
+	public Like deleteLike (long id) {
+		return deleteLike(likeRepository.findById(id).orElseThrow());
+	}
+	
+	/**
+	 * All deletes should pass through here to insure message sent
+	 * 
+	 * @param like
+	 * @return
+	 */
+	public Like deleteLike (Like like) {
+		messageService.deleteLike(like);
+		likeRepository.delete(like);
+		return like;
 	}
 	
 	public long findLikeTypeId(String name) throws NoSuchElementException {

@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.idontchop.datemediaservice.dtos.RestWrapper;
+import dtos.RestWrapper;
 import com.idontchop.datemediaservice.entities.HiddenRequirements;
 import com.idontchop.datemediaservice.services.HiddenRequirementsService;
 
